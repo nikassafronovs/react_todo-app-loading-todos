@@ -53,23 +53,22 @@ export const App: React.FC = () => {
 
   const activeTodosCount = todos.filter(todo => !todo.completed).length;
 
-  function addTodo(todoTitle: string) {
-    return client
-      .post<Todo>('/todos', {
+  async function addTodo(todoTitle: string) {
+    try {
+      const newTodo = await client.post<Todo>('/todos', {
         title: todoTitle,
         userId: USER_ID,
         completed: false,
-      })
-      .then(newTodo => {
-        setTodos(current => [newTodo, ...current]);
-      })
-      .catch(() => {
-        setErrorMessage('Unable to add a todo');
-
-        setTimeout(() => {
-          setErrorMessage('');
-        }, 3000);
       });
+
+      setTodos(current => [newTodo, ...current]);
+    } catch (e) {
+      setErrorMessage('Unable to add a todo');
+
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 3000);
+    }
   }
 
   return (
